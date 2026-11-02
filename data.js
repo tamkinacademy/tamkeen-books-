@@ -11,6 +11,8 @@ window.SITE = {
   // ---- পেমেন্ট সেটিং (নিজের তথ্য বসাও) ----
   nagadNumber: "01603239138",            // <-- তোমার নগদ নম্বর
   bkashNumber: "",                       // <-- বিকাশ থাকলে নম্বর, না থাকলে ফাঁকা রাখো
+  // পুরস্কারের কোডের hash (কোড নিজে এখানে নেই)। নতুন কোড লাগলে বলো, hash বানিয়ে দেব।
+  prizeHashes: ["e970d8921b09313d9e53265a4c3b9c49fab9c7e1b53b539c52e778d1c57af79c", "5ca4ab459eb9bb43c4bb15130ed075bf3eabdbde81be43a57f0d9c58fb50dcf1", "f22f3eb17087168633bb2affe53c0fdc4aa72b39f0e4f8774e7cdfc604c8db9e", "e38e2da243fb2ff90a524b635dfcdff88d39bc8951d0e4186e7bb785ca0be384", "bec186a41f40e94c2994b6bdf2ea6dd5bf8a1558bebc6823e2c3e01e45ffcfdb", "df78fb91c7efbdd9180f7a5b43bf27f01dcd84ff90b0e3678189e79d684a827e", "229cc1833e160f2243c1e643509afdae339e7ab8c9b4b6ce20ac67a21a66b86c", "5455caa68ac052783f937ce6542a27201792cfa1b7a142a30873b9eca0362eb0", "551923b3d2bee85e4f84cf3052cd97c6590c63e5b27ac576dc12ec9c158205be", "a13de1e27996aa56f23d765d0a52680f5c2c8dd304e9c9b16cef73608f8e5242", "b2be9baab6a6c502548a577e7c65362ba2a75d422d1074355fff8f1cc0f5ebc5", "2f4cccf5ce5798c7b0167d4138ce0bf111934a6dfc566d8087eccea1f5d49fed", "405c9a04aa3f33648cea49a8678c9225d141d2d3f9426847c0f3fc1f3931ab3f", "8c70c3176d2d0a60e3c6fe9453e97f4ee181c7ef9bfb35eb380b0c5e0cacf99f", "9c34847d21e3ecf8d4df3b19857f0668ec540695eea18e8d613af8e9c59a7494", "fc1328bea74e06b4513ab5b8c932ef2884fea09e8eb2390bdd7604315417dc5c", "2b519edf224b781132d42d3373d71f5e3845e7532b924fe2eecc70a006569ac6", "c7bffde2abeb0c65673a3fb3ae07c96916ed3ba7b4a9637cd28b8837c2e581a2", "c3151abb3cbcf4d03cc0b08dc4d20d87ace836f6cea304f57ddcd595963a5c2c", "f44887402df08deabb8569f7724442a5cdbfb7446d881cded2486a5bce8d830b"],
   orderLink: "https://wa.me/8801942319608" // <-- WhatsApp: wa.me/88 + তোমার নম্বর (বা মেসেঞ্জার লিংক)
 };
 
@@ -24,6 +26,16 @@ window.BOOKS = [
     offer: 30,       // অফার মূল্য
     tag: "ই-বুক · PDF",
     pages: "২৩ পাতা"
+  },
+  {
+    title: "SPEAK90 স্পিকিং প্র্যাকটিস প্যাক",
+    subtitle: "৯০টা বিষয়, ৩৬০টা দরকারি বাক্য",
+    desc: "প্রতিদিনের ইংরেজি বলার অভ্যাসের জন্য ইংরেজি-বাংলা বাক্যের সংগ্রহ। ২৩ দিনে শেষ করার নিয়মসহ। SPEAK90 পরীক্ষার বিজয়ীরা কোড দিয়ে বিনামূল্যে পাবে।",
+    cover: "cover-speak90-pack.png",
+    price: 190,
+    tag: "ই-বুক · PDF",
+    pages: "১৭ পাতা",
+    codeFree: true   // পুরস্কারের কোড দিলে বিনামূল্যে
   }
   // নতুন বই হলে এখানে কমা দিয়ে আরেকটা { title, subtitle, desc, cover, price, offer, tag, pages } বসাও
 ];
