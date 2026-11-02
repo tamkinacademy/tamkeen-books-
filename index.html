@@ -214,23 +214,24 @@ if(B[0])$('#heroImg').src=B[0].cover;
 
 // books
 const bk=S.bkashNumber?`<div style="font-size:14px;color:var(--mute);margin-top:8px">বিকাশ: <b style="color:var(--text)">${esc(S.bkashNumber)}</b></div>`:'';
+const ofr=b=>b.offer==null?b.price:b.offer;
 $('#bookList').innerHTML=B.map((b,i)=>`
  <div class="book reveal"><img src="${esc(b.cover)}" alt="${esc(b.title)}" loading="lazy">
   <div><span class="tag">${esc(b.tag||'বই')}</span><h3>${esc(b.title)}</h3><div class="sub">${esc(b.subtitle||'')}</div>
   <p>${esc(b.desc||'')}</p>
-  <div class="price"><b class="gold">৳${bn(b.offer)}</b><s>৳${bn(b.price)}</s><em>অফার</em></div>
-  <div class="row"><button class="btn p" data-buy="${i}">৳${bn(b.offer)} টাকায় কিনুন</button></div></div></div>`).join('')
+  <div class="price"><b class="gold">৳${bn(ofr(b))}</b>${ofr(b)<b.price?`<s>৳${bn(b.price)}</s><em>অফার</em>`:''}</div>
+  <div class="row"><button class="btn p" data-buy="${i}">৳${bn(ofr(b))} টাকায় কিনুন</button>${b.codeFree?`<button class="btn g" data-code="${i}">🎁 পুরস্কারের কোড আছে?</button>`:''}</div></div></div>`).join('')
  +`<div class="book soon reveal"><div style="font-size:30px">✦</div><div>আরও বই আসছে</div></div>`;
 
 // buy modal
 const M=document.createElement('div');M.className='modal';M.id='modal';document.body.appendChild(M);
 function buy(i){
   const b=B[i];
-  const msg=encodeURIComponent(`আসসালামু আলাইকুম, আমি "${b.title}" বইটি কিনেছি (৳${b.offer})। আমার TrxID: `);
+  const msg=encodeURIComponent(`আসসালামু আলাইকুম, আমি "${b.title}" বইটি কিনেছি (৳${ofr(b)})। আমার TrxID: `);
   const link=(S.orderLink||'#')+((S.orderLink||'').includes('?')?'&':'?')+'text='+msg;
   M.innerHTML=`<div class="mbox"><button class="x" id="mx" aria-label="বন্ধ করুন">×</button>
-   <h3>${esc(b.title)}</h3><div style="color:var(--gold2)">অফার মূল্য ৳${bn(b.offer)} <s style="color:var(--mute)">৳${bn(b.price)}</s></div>
-   <ol><li>নিচের নগদ নম্বরে <b>৳${bn(b.offer)} টাকা Send Money</b> করুন।
+   <h3>${esc(b.title)}</h3><div style="color:var(--gold2)">${ofr(b)<b.price?'অফার মূল্য ':'মূল্য '}৳${bn(ofr(b))} ${ofr(b)<b.price?`<s style="color:var(--mute)">৳${bn(b.price)}</s>`:''}</div>
+   <ol><li>নিচের নগদ নম্বরে <b>৳${bn(ofr(b))} টাকা Send Money</b> করুন।
      <div class="num"><span id="nn">${esc(S.nagadNumber||'')}</span><button id="cp">কপি</button></div>${bk}</li>
    <li>পেমেন্টের <b>TrxID</b> কপি করুন।</li>
    <li>নিচের বোতামে চাপ দিয়ে WhatsApp-এ TrxID পাঠান। PDF সাথে সাথে পাঠিয়ে দেওয়া হবে।</li></ol>
@@ -240,8 +241,30 @@ function buy(i){
   $('#mx').onclick=()=>M.classList.remove('open');
   $('#cp').onclick=e=>{try{navigator.clipboard.writeText(S.nagadNumber||'');e.target.textContent='কপি হয়েছে'}catch(_){}};
 }
+
+async function sha(s){const u=new TextEncoder().encode(s),d=await crypto.subtle.digest('SHA-256',u);return [...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function codeModal(i){
+  const b=B[i];
+  M.innerHTML=`<div class="mbox"><button class="x" id="mx" aria-label="বন্ধ করুন">×</button>
+   <h3>🎁 পুরস্কারের কোড</h3><div style="color:var(--gold2);margin-bottom:12px">${esc(b.title)}</div>
+   <p style="color:var(--mute);line-height:1.7;margin-bottom:12px">SPEAK90 পরীক্ষায় জিতলে তুমি একটা কোড পাবে। কোডটা এখানে লিখলে বইটা বিনামূল্যে পাঠানো হবে।</p>
+   <input id="pc" placeholder="যেমন: TK-ABC123" autocomplete="off" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#00000040;color:var(--text);font-size:16px;margin-bottom:10px">
+   <button class="btn p" id="pg" style="width:100%;justify-content:center">কোড যাচাই করো</button><div id="pm" class="mute" style="margin-top:12px"></div></div>`;
+  M.classList.add('open');$('#mx').onclick=()=>M.classList.remove('open');
+  $('#pg').onclick=async()=>{
+    const c=$('#pc').value.trim().toUpperCase().replace(/\s+/g,''),m=$('#pm');
+    if(c.length<5){m.style.color='#f87171';m.textContent='কোডটা লিখুন';return}
+    try{
+      const ok=(S.prizeHashes||[]).includes(await sha('tk:'+c));
+      if(!ok){m.style.color='#f87171';m.textContent='কোডটা ঠিক নয়। আবার দেখে লিখুন।';return}
+      const msg=encodeURIComponent(`আসসালামু আলাইকুম, আমি SPEAK90 পরীক্ষার পুরস্কার হিসেবে "${b.title}" বইটি নিতে চাই। আমার কোড: ${c}`);
+      const link=(S.orderLink||'#')+((S.orderLink||'').includes('?')?'&':'?')+'text='+msg;
+      m.style.color='#5eead4';m.innerHTML='✓ কোড সঠিক! নিচের বোতামে চাপ দিয়ে WhatsApp-এ কোডটা পাঠাও। বই পাঠিয়ে দেওয়া হবে।<a class="btn p" style="width:100%;justify-content:center;margin-top:12px" href="'+link+'" target="_blank" rel="noopener">WhatsApp-এ কোড পাঠান</a>';
+    }catch(e){m.style.color='#f87171';m.textContent='এখন যাচাই করা যাচ্ছে না। অন্য ব্রাউজারে চেষ্টা করুন।'}
+  };
+}
 M.addEventListener('click',e=>{if(e.target===M)M.classList.remove('open')});
-$('#bookList').addEventListener('click',e=>{const x=e.target.closest('[data-buy]');if(x)buy(+x.dataset.buy)});
+$('#bookList').addEventListener('click',e=>{const x=e.target.closest('[data-buy]');if(x)return buy(+x.dataset.buy);const y=e.target.closest('[data-code]');if(y)codeModal(+y.dataset.code)});
 
 // posts
 const cats=['সব',...new Set(P.map(p=>p.cat))];
